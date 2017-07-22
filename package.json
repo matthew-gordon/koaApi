@@ -1,0 +1,19 @@
+{
+  "name": "koaApi",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "author": "Matthew Gordon <laxredemption5525@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "http-shutdown": "^1.2.0",
+    "kcors": "^2.2.1",
+    "koa": "^2.3.0",
+    "koa-bodyparser": "^4.2.0",
+    "koa-helmet": "^3.2.0",
+    "koa-logger": "^3.0.1",
+    "koa-response-time": "^2.0.0"
+  }
+}
