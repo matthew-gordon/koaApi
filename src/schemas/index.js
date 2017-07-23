@@ -1,4 +1,4 @@
-const user = require('./user-schema');
+const user = require('./user-schema')
 
 module.exports = function (app) {
   app.schemas = {

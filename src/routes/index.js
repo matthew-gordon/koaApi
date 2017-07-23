@@ -1,11 +1,11 @@
-const Router = require('koa-router');
-const router = new Router();
-const api = new Router();
+const Router = require('koa-router')
+const router = new Router()
+const api = new Router()
 
-const users = require('./users-router');
+const users = require('./users-router')
 
-api.use(users);
+api.use(users)
 
-router.use('/api', api.routes());
+router.use('/api', api.routes())
 
-module.exports = router;
+module.exports = router

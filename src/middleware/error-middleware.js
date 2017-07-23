@@ -22,7 +22,7 @@ module.exports = async (ctx, next) => {
     if (!ctx.response.body) {
       ctx.response.body = {errors: {}}
     }
-    // ctx.app.emit('error', err, ctx);
+    // ctx.app.emit('error', err, ctx)
     console.error(err)
 
     switch (true) {

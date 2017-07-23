@@ -24,8 +24,8 @@ const users = [
 
 function getUsers () {
   return users.map(u => {
-    const salt = bcrypt.genSaltSync();
-    const hash = bcrypt.hashSync('password123', salt);
+    const salt = bcrypt.genSaltSync()
+    const hash = bcrypt.hashSync('password123', salt)
 
     return {
       id: u.id,
