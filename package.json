@@ -9,6 +9,7 @@
   "license": "MIT",
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "date-fns": "^1.28.5",
     "dotenv": "^4.0.0",
     "http-shutdown": "^1.2.0",
     "jsonwebtoken": "^7.4.1",
