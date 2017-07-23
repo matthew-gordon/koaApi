@@ -1,4 +1,4 @@
-const config = require('config');
+const config = require('./src/config');
 const http = require('http');
 const Koa = require('koa');
 
@@ -10,9 +10,13 @@ const logger = require('koa-logger');
 const cors = require('kcors');
 const bodyParser = require('koa-bodyparser');
 
+// MIDDLEWARE
+const db = require('./src/middleware/db-middleware');
+
 app.use(logger());
 
 app.use(cors());
+app.use(db(app));
 app.use(bodyParser());
 
 app.server = require('http-shutdown')(http.createServer(app.callback()));
