@@ -816,7 +816,7 @@ jsonify@~0.0.0:
   version "0.0.0"
   resolved "https://registry.yarnpkg.com/jsonify/-/jsonify-0.0.0.tgz#2c74b6ee41d93ca51b7b5aaee8f503631d252a73"
 
-jsonwebtoken@^7.4.1:
+jsonwebtoken@7.4.1, jsonwebtoken@^7.4.1:
   version "7.4.1"
   resolved "https://registry.yarnpkg.com/jsonwebtoken/-/jsonwebtoken-7.4.1.tgz#7ca324f5215f8be039cd35a6c45bb8cb74a448fb"
   dependencies:
@@ -929,6 +929,13 @@ koa-is-json@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/koa-is-json/-/koa-is-json-1.0.0.tgz#273c07edcdcb8df6a2c1ab7d59ee76491451ec14"
 
+koa-jwt@^3.2.2:
+  version "3.2.2"
+  resolved "https://registry.yarnpkg.com/koa-jwt/-/koa-jwt-3.2.2.tgz#680de615869678a795838270190d7a44581e334e"
+  dependencies:
+    jsonwebtoken "7.4.1"
+    koa-unless "1.0.0"
+
 koa-logger@^3.0.1:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/koa-logger/-/koa-logger-3.0.1.tgz#82a8c993c4de932052743229d600e8e8b1ab7ed1"
@@ -941,6 +948,10 @@ koa-logger@^3.0.1:
 koa-response-time@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/koa-response-time/-/koa-response-time-2.0.0.tgz#9590b54284dc59a9ec10f80b69048a66188342bb"
+
+koa-unless@1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/koa-unless/-/koa-unless-1.0.0.tgz#5aa57384bc882568afc90ac04852a3d58658aeeb"
 
 koa@^2.3.0:
   version "2.3.0"
