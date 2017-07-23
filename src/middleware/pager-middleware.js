@@ -1,6 +1,6 @@
-const qs = require('qs');
+const qs = require('qs')
 
-const filter = ['tag', 'author', 'favorited']
+// const filter = ['tag', 'author', 'favorited']
 
 module.exports = (ctx, next) => {
   if (ctx.method !== 'GET') {

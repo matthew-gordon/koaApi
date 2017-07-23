@@ -1,8 +1,8 @@
-// const slug = require('slug')
-// const uuid = require('uuid')
-// const humps = require('humps')
-// const _ = require('lodash')
-// const {ValidationError} = require('lib/errors')
+const slug = require('slug')
+const uuid = require('uuid')
+const humps = require('humps')
+const _ = require('lodash')
+const {ValidationError} = require('lib/errors')
 //
 // const {getSelect} = require('lib/utils')
 // const {articleFields, userFields, relationMaps} = require('lib/relations-map')
@@ -119,7 +119,7 @@ module.exports = {
         .select('id')
         .whereIn('username', author)
 
-      articleQuery = articleQuery.andWhere('articles.author', 'in', subQuery)
+      articlesQuery = articlesQuery.andWhere('articles.author', 'in', subQuery)
       countQuery = countQuery.andWhere('articles.author', 'in', subQuery)
     }
 
@@ -170,5 +170,72 @@ module.exports = {
 
   async getOne (ctx) {
     ctx.body = {article: ctx.params.article}
-  }
+  },
+
+  async post (ctx) {
+    const {body} = ctx.request
+    let {article} = body
+    let tags
+    const opts = {abortEarly: false}
+
+    article.id = uuid()
+    article.author = ctx.state.user.id
+
+    article = await ctx.app.schemas.article.validate(article, opts)
+
+    article.slug = slug(_.get(article, 'title', ''), {lower: true})
+
+    if (article.tagList && article.tagList.length > 0) {
+      tags = await Promise.all(
+        article.tagList
+          .map(tag => ({id: uuid(), name: tag}))
+          .map(t => ctx.app.schemas.tag.validate(tag, opts))
+      )
+    }
+
+    try {
+      await ctx.app.db('articles')
+        .insert(humps.decamelizeKeys(_.omit(article, ['tagList'])))
+    } catch (err) {
+      if (Number(err.errno) === 19 || Number(err.code) === 23505) {
+        article.slug = article.slug + '-' + uuid().substr(-6)
+
+        await ctx.app.db('articles')
+          .insert(humps.decamelizeKeys(_.omit(article, ['tagList'])))
+      } else {
+        throw err
+      }
+    }
+
+    if (tags && tags.length) {
+      for (var i = 0; i < tags.length; i++) {
+        try {
+          await ctx.app.db('tags').insert(humps.decamelizeKeys(tags[i]))
+        } catch (err) {
+          if (Number(err.errno) !== 19 && Number(err.code) !== 23505) {
+            throw err
+          }
+        }
+      }
+
+      tags = await ctx.app.db('tags')
+        .select()
+        .whereIn('name', tags.map(tag => tag.name))
+
+      const relations = tags.map(tag => ({
+        id: uuid(),
+        tag: tag.id,
+        article: article.id
+      }))
+
+      await ctx.app.db('articles_tags').insert(relations)
+    }
+
+    article.favorited = false
+    article.author = _.pick(ctx.state.user, ['username', 'bio', 'image'])
+    article.author.following = false
+
+    ctx.body = {article}
+  },
+
 }
