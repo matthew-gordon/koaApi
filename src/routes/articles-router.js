@@ -4,6 +4,8 @@ const router = new Router()
 
 router.param('slug', ctrl.bySlug)
 
+router.get('/articles', ctrl.get)
+
 router.get('/articles/:slug', ctrl.getOne)
 
 module.exports = router.routes()

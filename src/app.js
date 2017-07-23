@@ -20,6 +20,7 @@ const error = require('middleware/error-middleware')
 const db = require('middleware/db-middleware')
 const jwt = require('middleware/jwt-middleware')
 const userMiddleware = require('middleware/user-middleware')
+const pagerMiddleware = require('middleware/pager-middleware')
 
 // ROUTES
 const routes = require('routes')
@@ -40,6 +41,7 @@ app.use(jwt)
 app.use(bodyParser(config.bodyParser))
 
 app.use(userMiddleware)
+app.use(pagerMiddleware)
 
 app.use(routes.routes())
 app.use(routes.allowedMethods())
