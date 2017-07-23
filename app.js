@@ -17,12 +17,13 @@ app.use(bodyParser());
 
 app.server = require('http-shutdown')(http.createServer(app.callback()));
 
-app.shutDown = function () {
+app.shutDown = function shutDown () {
   let err;
 
-  if (this.server.listening) {
-    this.server.shutdown(err => {
+  console.log('Shutdown');
 
+  if (this.server.listening) {
+    this.server.shutdown(error => {
       if (error) {
         console.error(error);
         err = error

@@ -3,12 +3,15 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "node app.js"
+    "start": "node ./src/bin/server.js"
   },
   "author": "Matthew Gordon <laxredemption5525@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^4.0.0",
     "http-shutdown": "^1.2.0",
+    "jsonwebtoken": "^7.4.1",
     "kcors": "^2.2.1",
     "knex": "^0.13.0",
     "koa": "^2.3.0",
