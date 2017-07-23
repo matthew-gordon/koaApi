@@ -1,20 +1,20 @@
-const path = require('path');
-const knexfile = require('./knexfile');
-const _ = require('lodash');
+const path = require('path')
+const _ = require('lodash')
+const knexfile = require('./knexfile')
 
-const ROOT = path.resolve(__dirname, '../');
-const NODE_ENV = _.defaultTo(process.env.NODE_ENV, 'development');
+const ROOT = path.resolve(__dirname, '../')
+const NODE_ENV = _.defaultTo(process.env.NODE_ENV, 'development')
 
-const isProd = NODE_ENV === 'production';
-const isTest = NODE_ENV === 'test';
-const isDev = NODE_ENV === 'development';
+const isProd = NODE_ENV === 'production'
+const isTest = NODE_ENV === 'test'
+const isDev = NODE_ENV === 'development'
 
 module.exports = {
   server: {
     port: normalizePort(_.defaultTo(process.env.PORT, 3000)),
     host: _.defaultTo(process.env.HOST, 'localhost'),
     root: ROOT,
-    data: path.join(ROOT, '../', 'data')
+    data: path.join(ROOT, '../', '/data')
   },
 
   env: {
@@ -48,15 +48,15 @@ module.exports = {
 }
 
 function normalizePort (val) {
-  let port = parseInt(val, 10);
+  var port = parseInt(val, 10)
 
   if (isNaN(port)) {
-    return val;
+    return val
   }
 
   if (port >= 0) {
     return port
   }
 
-  return false;
+  return false
 }

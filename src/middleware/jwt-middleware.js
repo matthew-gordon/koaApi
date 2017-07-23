@@ -3,7 +3,7 @@ const {jwtSecret} = require('config');
 
 // https://github.com/koajs/jwt
 
-module.export = koaJwt({
+module.exports = koaJwt({
   getToken (ctx, opts) {
     const {authorization} = ctx.header;
 

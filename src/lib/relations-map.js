@@ -1,9 +1,4 @@
-const userFields = [
-  'id',
-  'image'
-  'bio',
-  'username'
-]
+const userFields = ['id', 'image', 'bio', 'username']
 
 const articleFields = [
   'id',
@@ -16,7 +11,14 @@ const articleFields = [
   'updated_at'
 ]
 
-const relationMaps = [
+const commentFields = [
+  'id',
+  'body',
+  'created_at',
+  'updated_at'
+]
+
+const relationsMaps = [
   {
     mapId: 'articleMap',
     idProperty: 'id',
@@ -39,7 +41,7 @@ const relationMaps = [
   {
     mapId: 'userMap',
     idProperty: 'id',
-    properties: [...userFIelds, 'id', 'name']
+    properties: [...userFields, 'following']
   },
   {
     mapId: 'tagMap',
@@ -48,7 +50,7 @@ const relationMaps = [
   }
 ]
 
-exports.relationMaps = relationMaps;
-exports.userFields = userFields;
-exports.articleFields = articleFields;
-exports.commentFields = commentFields;
+exports.relationsMaps = relationsMaps
+exports.userFields = userFields
+exports.articleFields = articleFields
+exports.commentFields = commentFields

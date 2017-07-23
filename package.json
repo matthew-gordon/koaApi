@@ -2,31 +2,66 @@
   "name": "koaApi",
   "version": "1.0.0",
   "main": "index.js",
-  "scripts": {
-    "start": "node ./src/bin/server.js"
-  },
-  "author": "Matthew Gordon <laxredemption5525@gmail.com>",
+  "author": "Matt Gordon <laxredemption5525@gmail.com>",
   "license": "MIT",
+  "scripts": {
+    "start": "cross-env NODE_PATH=src node src/bin/server.js",
+    "db:load": "knex seed:run --knexfile src/config/knexfile.js",
+    "lint": "standard | snazzy",
+    "lint:fix": "standard --fix | snazzy",
+    "test": "jest",
+    "test:watch": "jest --watch"
+  },
+  "pre-commit": [
+    "lint"
+  ],
   "dependencies": {
     "bcryptjs": "^2.4.3",
-    "date-fns": "^1.28.5",
+    "cross-env": "^5.0.1",
+    "date-fns": "^1.28.3",
     "dotenv": "^4.0.0",
     "http-shutdown": "^1.2.0",
-    "jsonwebtoken": "^7.4.1",
-    "kcors": "^2.2.1",
+    "humps": "^2.0.0",
+    "join-js": "^0.4.1",
+    "jsonwebtoken": "^7.4.0",
+    "kcors": "next",
     "knex": "^0.13.0",
-    "koa": "^2.3.0",
+    "koa": "^2.2.0",
     "koa-bodyparser": "^4.2.0",
-    "koa-helmet": "^3.2.0",
-    "koa-jwt": "^3.2.2",
+    "koa-helmet": "^3.1.0",
+    "koa-jwt": "^3.2.1",
     "koa-logger": "^3.0.1",
     "koa-response-time": "^2.0.0",
+    "koa-router": "^7.1.1",
     "lodash": "^4.17.4",
+    "pg": "^6.1.5",
+    "qs": "^6.4.0",
+    "request": "^2.81.0",
+    "request-promise": "^4.2.0",
     "slug": "^0.9.1",
     "sqlite3": "^3.1.8",
-    "uuid": "^3.1.0"
+    "uuid": "^3.0.1",
+    "validator": "^8.0.0",
+    "yup": "^0.21.3"
   },
   "devDependencies": {
-    "faker": "^4.1.0"
+    "faker": "^4.1.0",
+    "jest": "^20.0.4",
+    "pre-commit": "^1.2.2",
+    "snazzy": "^7.0.0",
+    "standard": "^10.0.2"
+  },
+  "jest": {
+    "testPathIgnorePatterns": [
+      "<rootDir>[/\\\\](docs|node_modules)[/\\\\]"
+    ],
+    "bail": true,
+    "testMatch": [
+      "**/__tests__/**/*index.js?(x)",
+      "**/?(*.)(spec|test)index.js?(x)"
+    ],
+    "modulePaths": [
+      "src"
+    ]
   }
 }
