@@ -6,16 +6,16 @@ const auth = require('middleware/auth-required-middleware')
 
 // AUTH API
 
-//- LOGIN
+// - LOGIN
 router.post('/users/login', ctrl.login)
 
-//- REGISTER
+// - REGISTER
 router.post('/users', ctrl.post)
 
-//- GET USER
+// - GET USER
 router.get('/user', auth, ctrl.get)
 
-//- UPDATE USER
+// - UPDATE USER
 router.put('/user', auth, ctrl.put)
 
 module.exports = router.routes()
