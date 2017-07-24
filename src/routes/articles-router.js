@@ -13,6 +13,8 @@ router.post('/articles', auth, ctrl.post)
 router.put('/articles/:slug', auth, ctrl.put)
 router.del('/articles/:slug', auth, ctrl.del)
 
+// FAVORITES API
 router.post('/articles/:slug/favorite', auth, ctrl.favorite.post)
+router.del('/articles/:slug/favorite', auth, ctrl.favorite.del)
 
 module.exports = router.routes()

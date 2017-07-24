@@ -5,7 +5,8 @@ const _ = require('lodash')
 const {ValidationError} = require('lib/errors')
 //
 // const {getSelect} = require('lib/utils')
-const {articleFields, userFields, relationsMaps} = require('lib/relations-map')
+// articleFields, userFields,
+const {relationsMaps} = require('lib/relations-map')
 const joinJs = require('join-js').default
 
 module.exports = {
@@ -394,6 +395,28 @@ module.exports = {
       ctx.body = {article: ctx.params.article}
     },
 
+    async del (ctx) {
+      const {article} = ctx.params
+
+      if (!article.favorited) {
+        ctx.body = {article: ctx.params.article}
+        return
+      }
+
+      await Promise.all([
+        ctx.app.db('favorites')
+          .del()
+          .where({user: ctx.state.user.id, article: article.id}),
+        ctx.app.db('articles')
+          .decrement('favorites_count', 1)
+          .where({id: article.id})
+      ])
+
+      article.favorited = false
+      article.favorites_count = Number(article.favorites_count) - 1
+
+      ctx.body = {article: ctx.params.article}
+    }
 
   }
 
