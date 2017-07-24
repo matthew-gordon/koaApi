@@ -2,6 +2,7 @@ const slug = require('slug')
 const uuid = require('uuid')
 const humps = require('humps')
 const _ = require('lodash')
+const comments = require('./comments-controller')
 const {ValidationError} = require('lib/errors')
 //
 // const {getSelect} = require('lib/utils')
@@ -427,7 +428,6 @@ module.exports = {
 
       ctx.body = {articles, articlesCount}
     }
-    
   },
 
   favorite: {
@@ -482,5 +482,5 @@ module.exports = {
 
   },
 
-  // comments
+  comments
 }

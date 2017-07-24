@@ -6,6 +6,7 @@ const auth = require('middleware/auth-required-middleware')
 
 // CUSTOM PARAMS
 router.param('slug', ctrl.bySlug)
+router.param('comment', ctrl.comments.byComment)
 
 // FEED API
 router.get('/articles/feed', auth, ctrl.feed.get)
@@ -22,6 +23,6 @@ router.post('/articles/:slug/favorite', auth, ctrl.favorite.post)
 router.del('/articles/:slug/favorite', auth, ctrl.favorite.del)
 
 // COMMENTS API
-// router.get('/articles/:slug/comments', ctrl.comments.get)
+router.get('/articles/:slug/comments', ctrl.comments.get)
 
 module.exports = router.routes()
