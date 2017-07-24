@@ -4,7 +4,11 @@ const router = new Router()
 
 const auth = require('middleware/auth-required-middleware')
 
+// CUSTOM PARAMS
 router.param('slug', ctrl.bySlug)
+
+// FEED API
+router.get('/articles/feed', auth, ctrl.feed.get)
 
 // ARTICLES API
 router.get('/articles', ctrl.get)
@@ -16,5 +20,8 @@ router.del('/articles/:slug', auth, ctrl.del)
 // FAVORITES API
 router.post('/articles/:slug/favorite', auth, ctrl.favorite.post)
 router.del('/articles/:slug/favorite', auth, ctrl.favorite.del)
+
+// COMMENTS API
+// router.get('/articles/:slug/comments', ctrl.comments.get)
 
 module.exports = router.routes()

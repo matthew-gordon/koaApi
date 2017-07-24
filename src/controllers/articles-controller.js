@@ -368,6 +368,68 @@ module.exports = {
     ctx.body = {}
   },
 
+  feed: {
+
+    async get (ctx) {
+      const {user} = ctx.state
+      const {offset, limit} = ctx.query
+
+      const followedQuery = ctx.app.db('followers')
+        .pluck('user')
+        .where({follower: user.id})
+
+      let [articles, [countRes]] = await Promise.all([
+        ctx.app.db('articles')
+          .select(
+            'articles.id as article_id',
+            'articles.slug as article_slug',
+            'articles.title as article_title',
+            'articles.body as article_body',
+            'articles.description as article_description',
+            'articles.favorites_count as article_favorites_count',
+            'articles.created_at as article_created_at',
+            'articles.updated_at as article_updated_at',
+            'users.id as author_id',
+            'users.image as author_image',
+            'users.bio as author_bio',
+            'users.username as author_username',
+            'articles_tags.id as tag_id',
+            'tags.id as tag_id',
+            'tags.name as tag_name',
+            'favorites.id as article_favorited'
+          )
+          .limit(limit)
+          .offset(offset)
+          .orderBy('articles.created_at', 'DESC')
+          .leftJoin('users', 'articles.author', 'users.id')
+          .leftJoin('articles_tags', 'articles.id', 'articles_tags.article')
+          .leftJoin('tags', 'articles_tags.tag', 'tags.id')
+          .leftJoin('favorites', function () {
+            this.on('articles.id', '=', 'favorites.article')
+              .onIn('favorites.user', [user && user.id])
+          }),
+
+        ctx.app.db('articles').count().whereIn('author', followedQuery)
+      ])
+
+      articles = joinJs
+        .map(articles, relationsMaps, 'articleMap', 'article_')
+        .map(article => {
+          article.favorited = Boolean(article.favorited)
+          article.tagList = article.tagList.map(tag => tag.name)
+          article.author.following = true
+          delete article.author.id
+          return article
+        })
+
+      let articlesCount = countRes.count || countRes['count(*)']
+      articlesCount = Number(articlesCount)
+
+      ctx.body = {articles, articlesCount}
+    }
+    
+  },
+
   favorite: {
 
     async post (ctx) {
@@ -418,6 +480,7 @@ module.exports = {
       ctx.body = {article: ctx.params.article}
     }
 
-  }
+  },
 
+  // comments
 }
