@@ -365,6 +365,36 @@ module.exports = {
     ])
 
     ctx.body = {}
+  },
+
+  favorite: {
+
+    async post (ctx) {
+      const {article} = ctx.params
+
+      if (article.favorited) {
+        ctx.body = {article: ctx.params.article}
+        return
+      }
+
+      await Promise.all([
+        ctx.app.db('favorites').insert({
+          id: uuid(),
+          user: ctx.state.user.id,
+          article: article.id
+        }),
+        ctx.app.db('articles')
+          .increment('favorites_count', 1)
+          .where({id: article.id})
+      ])
+
+      article.favorited = true
+      article.favorites_count = Number(article.favorites_count) + 1
+
+      ctx.body = {article: ctx.params.article}
+    },
+
+
   }
 
 }

@@ -13,4 +13,6 @@ router.post('/articles', auth, ctrl.post)
 router.put('/articles/:slug', auth, ctrl.put)
 router.del('/articles/:slug', auth, ctrl.del)
 
+router.post('/articles/:slug/favorite', auth, ctrl.favorite.post)
+
 module.exports = router.routes()
