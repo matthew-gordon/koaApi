@@ -2,7 +2,7 @@ const slug = require('slug')
 const uuid = require('uuid')
 const humps = require('humps')
 const _ = require('lodash')
-const {ValidationError} = require('lib/errors')
+// const {ValidationError} = require('lib/errors')
 //
 // const {getSelect} = require('lib/utils')
 // const {articleFields, userFields, relationMaps} = require('lib/relations-map')
@@ -189,7 +189,7 @@ module.exports = {
       tags = await Promise.all(
         article.tagList
           .map(tag => ({id: uuid(), name: tag}))
-          .map(t => ctx.app.schemas.tag.validate(tag, opts))
+          .map(tag => ctx.app.schemas.tag.validate(tag, opts))
       )
     }
 
@@ -237,5 +237,124 @@ module.exports = {
 
     ctx.body = {article}
   },
+
+  async put (ctx) {
+    const {article} = ctx.params
+
+    if (article.author.id !== ctx.state.user.id) {
+      ctx.throw(403, new ValidationError(['not owned by user'], '', 'article'))
+    }
+
+    const {body} = ctx.request
+    let {article: fields = {}} = body
+    const opts = {abortEarly: false}
+
+    let newArticle = Object.assign({}, article, fields)
+    newArticle.author = newArticle.author.id
+    newArticle = await ctx.app.schemas.article.validate(
+      humps.camelizeKeys(newArticle),
+      opts
+    )
+
+    if (fields.title) {
+      newArticle.slug = slug(_.get(newArticle, 'title', ''), {lower: true})
+    }
+
+    newArticle.updatedAt = new Date().toISOString()
+
+    try {
+      await ctx.app.db('articles')
+        .update(humps.decamelizeKeys(
+          _.pick(
+            newArticle,
+            ['title', 'slug', 'body', 'description', 'updatedAt']
+          )
+        ))
+        .where({id: article.id})
+    } catch (err) {
+      if (Number(err.errno) === 19 || Number(err.code) === 23505) {
+        newArticle.slug = newArticle.slug + '-' + uuid().substr(-6)
+
+        await ctx.app.db('articles')
+          .update(humps.decamelizeKeys(
+            _.pick(
+              newArticle,
+              ['title', 'slug', 'body', 'description', 'updatedAt']
+            )
+          ))
+          .where({id: article.id})
+      } else {
+        throw err
+      }
+    }
+
+    if (fields.tagList && fields.tagList.length === 0) {
+      await ctx.app.db('articles_tags')
+        .del()
+        .where({article: article.id})
+    }
+
+    if (fields.tagList && fields.tagList.length > 0) {
+      if (_.difference(article.tagList).length || _.difference(fields.tagList).length) {
+        await ctx.app.db('articles_tags')
+          .del()
+          .where({article: article.id})
+
+        let tags = await Promise.all(
+          newArticle.tagList
+            .map(t => ({id: uuid(), name: t}))
+            .map(t => ctx.app.schemas.tag.validate(t, opts))
+        )
+
+        for (var i = 0; i < tags.length; i++) {
+          try {
+            await ctx.app.db('tags').insert(humps.decamelizeKeys(tags[i]))
+          } catch (err) {
+            if (Number(err.errno) !== 19 && Number(err.code) !== 23505) {
+              throw err
+            }
+          }
+        }
+
+        tags = await ctx.app.db('tags')
+          .select()
+          .whereIn('name', tags.map(t => t.name))
+
+        const relations = tags.map(t => ({
+          id: uuid(),
+          tag: t.id,
+          article: article.id
+        }))
+
+        await ctx.app.db('articles_tags').insert(relations)
+      }
+    }
+
+    newArticle.author = ctx.params.author
+    newArticle.favorited = article.favorited
+    ctx.body = {article: newArticle}
+  },
+
+  async del (ctx) {
+    const {article} = ctx.params
+
+    if (article.author.id !== ctx.state.user.id) {
+      ctx.thorw(403, new ValidationError(['not owned by user'], '', 'article'))
+    }
+
+    await Promise.all([
+      ctx.app.db('favorites')
+        .del()
+        .where({user: ctx.state.user.id, article: article.id}),
+      ctx.app.db('articles_tags')
+        .del()
+        .where({article: article.id}),
+      ctx.app.db('articles')
+        .del()
+        .where({id: article.id})
+    ])
+
+    ctx.body = {}
+  }
 
 }
