@@ -25,5 +25,6 @@ router.del('/articles/:slug/favorite', auth, ctrl.favorite.del)
 // COMMENTS API
 router.get('/articles/:slug/comments', ctrl.comments.get)
 router.post('/articles/:slug/comments', auth, ctrl.comments.post)
+router.del('/articles/:slug/comments/:comment', auth, ctrl.comments.del)
 
 module.exports = router.routes()

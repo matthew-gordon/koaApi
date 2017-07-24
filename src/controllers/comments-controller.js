@@ -59,7 +59,7 @@ module.exports = {
     ctx.body = {comments}
   },
 
-  async post(ctx) {
+  async post (ctx) {
     const {body} = ctx.request
     const {user} = ctx.state
     const {article} = ctx.params
@@ -78,6 +78,13 @@ module.exports = {
     comment.author = _.pick(user, ['username', 'bio', 'image', 'id'])
 
     ctx.body = {comment}
+  },
+
+  async del (ctx) {
+    const {comment} = ctx.params
+
+    await ctx.app.db('comments').del().where({id: comment.id})
+
+    ctx.body = {}
   }
-  
 }
