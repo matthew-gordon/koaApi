@@ -2,7 +2,8 @@ const humps = require('humps')
 const uuid = require('uuid')
 const _ = require('lodash')
 // const {getSelect} = require('lib/utils')
-const {commentFields, userFields, relationsMaps} = require('lib/relations-map')
+// commentFields, userFields,
+const {relationsMaps} = require('lib/relations-map')
 const joinJs = require('join-js').default
 
 module.exports = {
@@ -41,7 +42,7 @@ module.exports = {
       )
       .where({article: article.id})
       .leftJoin('users', 'comments.author', 'users.id')
-      .leftJoin('followers', function() {
+      .leftJoin('followers', function () {
         this
           .on('users.id', '=', 'followers.user')
           .onIn('followers.follower', [user && user.id])
@@ -56,5 +57,27 @@ module.exports = {
       })
 
     ctx.body = {comments}
+  },
+
+  async post(ctx) {
+    const {body} = ctx.request
+    const {user} = ctx.state
+    const {article} = ctx.params
+    let {comment = {}} = body
+
+    const opts = {abortEarly: false}
+
+    comment.id = uuid()
+    comment.author = user.id
+    comment.article = article.id
+
+    comment = await ctx.app.schemas.comment.validate(comment, opts)
+
+    comment = await ctx.app.db('comments').insert(humps.decamelizeKeys(comment))
+
+    comment.author = _.pick(user, ['username', 'bio', 'image', 'id'])
+
+    ctx.body = {comment}
   }
+  
 }
