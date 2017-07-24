@@ -2,11 +2,11 @@ const slug = require('slug')
 const uuid = require('uuid')
 const humps = require('humps')
 const _ = require('lodash')
-// const {ValidationError} = require('lib/errors')
+const {ValidationError} = require('lib/errors')
 //
 // const {getSelect} = require('lib/utils')
-// const {articleFields, userFields, relationMaps} = require('lib/relations-map')
-// const joinJs = require('join-js').default
+const {articleFields, userFields, relationsMaps} = require('lib/relations-map')
+const joinJs = require('join-js').default
 
 module.exports = {
 
@@ -161,6 +161,16 @@ module.exports = {
       })
 
     let [articles, [countRes]] = await Promise.all([articlesQuery, countQuery])
+
+    articles = joinJs
+      .map(articles, relationsMaps, 'articleMap', 'article_')
+      .map(article => {
+        article.favorited = Boolean(article.favorited)
+        article.tagList = article.tagList.map(tag => tag.name)
+        article.author.following = Boolean(article.author.following)
+        delete article.author.id
+        return article
+      })
 
     let articlesCount = countRes.count || countRes['count(*)']
     articlesCount = Number(articlesCount)
