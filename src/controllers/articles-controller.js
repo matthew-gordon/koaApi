@@ -399,6 +399,7 @@ module.exports = {
             'tags.name as tag_name',
             'favorites.id as article_favorited'
           )
+          .whereIn('articles.author', followedQuery)
           .limit(limit)
           .offset(offset)
           .orderBy('articles.created_at', 'DESC')
@@ -483,4 +484,4 @@ module.exports = {
   },
 
   comments
-}
+};
