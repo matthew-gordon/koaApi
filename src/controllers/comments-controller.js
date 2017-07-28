@@ -2,7 +2,7 @@ const humps = require('humps')
 const uuid = require('uuid')
 const _ = require('lodash')
 // const {getSelect} = require('lib/utils')
-// commentFields, userFields,
+// commentFields, userFields
 const {relationsMaps} = require('lib/relations-map')
 const joinJs = require('join-js').default
 
@@ -50,10 +50,10 @@ module.exports = {
 
     comments = joinJs
       .map(comments, relationsMaps, 'commentMap', 'comment_')
-      .map(comment => {
-        delete comment.author.id
-        comment.author.following = Boolean(comment.author.following)
-        return comment
+      .map(c => {
+        delete c.author.id
+        c.author.following = Boolean(c.author.following)
+        return c
       })
 
     ctx.body = {comments}
@@ -73,7 +73,7 @@ module.exports = {
 
     comment = await ctx.app.schemas.comment.validate(comment, opts)
 
-    comment = await ctx.app.db('comments').insert(humps.decamelizeKeys(comment))
+    await ctx.app.db('comments').insert(humps.decamelizeKeys(comment))
 
     comment.author = _.pick(user, ['username', 'bio', 'image', 'id'])
 
@@ -87,4 +87,5 @@ module.exports = {
 
     ctx.body = {}
   }
+
 }

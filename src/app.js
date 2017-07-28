@@ -8,6 +8,7 @@ app.keys = [config.secret]
 
 require('schemas')(app)
 
+// KOA
 const responseTime = require('koa-response-time')
 const helmet = require('koa-helmet')
 const logger = require('koa-logger')
@@ -48,7 +49,7 @@ app.use(routes.allowedMethods())
 
 app.server = require('http-shutdown')(http.createServer(app.callback()))
 
-app.shutDown = function shutDown () {
+app.shutDown = function () {
   let err
 
   console.log('Shutdown')
