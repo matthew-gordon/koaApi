@@ -484,4 +484,4 @@ module.exports = {
   },
 
   comments
-};
+}
